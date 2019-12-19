@@ -1,6 +1,5 @@
 package com.trr.jsontraverse;
 
-import com.google.gson.Gson;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
@@ -22,12 +21,10 @@ public class App
         
     }
     /**
-     *  Method for taking in inputs
-     *  
-     * 
-     * 
+     *  Method for taking in the selector inputs
      * 
      * */
+    
     public static void getInput(HashMap<String,Object> map) {
     	
     	Scanner input = new Scanner(System.in);
@@ -55,6 +52,7 @@ public class App
     /**
      *  Method for reading the JSON file remotely
      * */
+    
     public static String readJsonFile(String urlString) {
     	
     	String jsonData="";
@@ -76,30 +74,27 @@ public class App
     
     
     /**
-     *  Method for parsing JSON file recursively and storing it into a HashMap
-     *  
-     * 
-     * 
-     * 
+     *  Method for parsing JSON file recursively and storing it into a HashMap and returns it 
      * */
+    
     public static HashMap<String,Object> buildMapFromJson(JsonObject jsonObject){
     	
     	HashMap<String,Object> map = new HashMap<String,Object>(); // key is always a string
     	
     	for(Entry<String,JsonElement> entry: jsonObject.entrySet()) {
+    		
     		String key = entry.getKey();
-    		
-    		
-    		
     		JsonElement value = entry.getValue();
-    		
-    		
     		map.put(entry.getKey(), getValue(value));
     	}
     	
     	return map;
     }
     
+    /*  Get value of each JSON element 
+     * 
+     * 
+     * */
     public static Object getValue(JsonElement element) { // four types
     	
     	if(element.isJsonNull()) { // if element is null return nothing
@@ -111,7 +106,7 @@ public class App
     		return buildMapFromJson(element.getAsJsonObject());
     	}
     	
-    	else if(element.isJsonArray()) { 
+    	else if(element.isJsonArray()) { // if an array, insert values into list separately  
     		ArrayList<Object> list = new ArrayList<Object>(element.getAsJsonArray().size());
     		for(JsonElement ele: element.getAsJsonArray()) {
     			list.add(getValue(ele));
@@ -120,7 +115,7 @@ public class App
     		return list;
     	}
     	
-    	else { // primitive
+    	else { // primitive values
     		JsonPrimitive primElement = element.getAsJsonPrimitive();
     		
     		if(primElement.isString())
@@ -132,11 +127,13 @@ public class App
     		
     	}
     	return null;
-    	
     }
     
     
-    
+    /* Method that will search recursively through the hash map that is formed from the JSON string 
+     * 
+     * 
+     * */
     public static void searchForView(HashMap<String,Object> map,String key ,String searchValue) {
         
     	Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -177,6 +174,9 @@ public class App
         }
     }
     
+    /* Method that checks whether the key,value pair exists
+     * 
+     * */
     public static boolean matchValues(HashMap map, String key, String value) {
     	
     		
@@ -184,14 +184,14 @@ public class App
 				
 				if(map.get(key) instanceof ArrayList) {
 					ArrayList list = (ArrayList)map.get(key);
+				
 					if(list.contains(value))
 						return true;
 				}
+				
 				else if(map.containsValue(value)) {
 					  return true;
 				}
-				
-			
 			}
     
 			return false;
